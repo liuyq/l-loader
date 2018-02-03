@@ -61,6 +61,9 @@ case "$1" in
 "hikey960")
 	PLATFORM=hikey960
 	;;
+"hikey970")
+	PLATFORM=hikey970
+	;;
 "")
 	# If $1 is empty, set ${PLATFORM} as hikey960 by default.
 	PLATFORM=hikey960
@@ -103,6 +106,10 @@ case "$PLATFORM" in
 	;;
 "hikey960")
 	EDK2_OUTPUT_DIR=${EDK2_DIR}/Build/HiKey960/${BUILD_OPTION}_${AARCH64_TOOLCHAIN}
+	cd ${BUILD_PATH}
+	;;
+"hikey970")
+	EDK2_OUTPUT_DIR=${EDK2_DIR}/Build/HiKey970/${BUILD_OPTION}_${AARCH64_TOOLCHAIN}
 	cd ${BUILD_PATH}
 	;;
 esac
@@ -191,6 +198,16 @@ case "${PLATFORM}" in
 "hikey960")
 	# Pack bl1.bin and BL33 together
 	make -f ${PLATFORM}.mk l-loader.bin
+
+	# Generate partition table with a patched sgdisk to force
+	# default alignment (2048) and sector size (4096)
+	if [ $GENERATE_PTABLE ]; then
+		PTABLE=aosp-32g SECTOR_SIZE=4096 SGDISK=./sgdisk bash -x generate_ptable.sh
+	fi
+	;;
+"hikey970")
+	# Pack bl1.bin and BL33 together
+	make -f ${PLATFORM}.mk
 
 	# Generate partition table with a patched sgdisk to force
 	# default alignment (2048) and sector size (4096)
