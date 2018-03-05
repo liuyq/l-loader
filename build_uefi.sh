@@ -169,6 +169,7 @@ esac
 
 # Build UEFI & ARM Trusted Firmware
 cd ${EDK2_DIR}
+ln -sf ../OpenPlatformPkg
 #${UEFI_TOOLS_DIR}/uefi-build.sh -b $BUILD_OPTION -a ../arm-trusted-firmware -s ../optee_os $PLATFORM
 ${UEFI_TOOLS_DIR}/uefi-build.sh -b $BUILD_OPTION -a ../arm-trusted-firmware $PLATFORM
 if [ $? != 0 ]; then
