@@ -16,7 +16,7 @@ prm_ptable.img:
 	done
 
 recovery.bin: $(BL1) $(NS_BL1U)
-	python gen_loader_hikey960.py -o $@ --img_bl1=$(BL1) --img_ns_bl1u=$(NS_BL1U)
+	python3 gen_loader_hikey960.py -o $@ --img_bl1=$(BL1) --img_ns_bl1u=$(NS_BL1U)
 
 .PHONY: clean
 clean:
