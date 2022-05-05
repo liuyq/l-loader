@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import os.path
@@ -46,8 +46,8 @@ class generator(object):
     def __init__(self, out_img):
         try:
             self.fp = open(out_img, "wb+")
-        except IOError, e:
-            print "*** file open error:", e
+        except IOError as e:
+            print("*** file open error:", e)
             sys.exit(3)
         else:
             self.entry_hd = [[0 for col in range(7)] for row in range(5)]
@@ -58,11 +58,11 @@ class generator(object):
     def add(self, lba, fname):
         try:
             fsize = os.path.getsize(fname)
-        except IOError, e:
-            print "*** file open error:", e
+        except IOError as e:
+            print("*** file open error:", e)
             sys.exit(4)
         else:
-            blocks = (fsize + self.block_size - 1) / self.block_size
+            blocks = int((fsize + self.block_size - 1) / self.block_size)
             # Boot Area1 in eMMC
             bootp = 1
             if self.idx == 0:
@@ -77,7 +77,7 @@ class generator(object):
             # Maybe the file size isn't aligned. So pad it.
             if (self.idx == 0):
                 if fsize > 2048:
-                    print 'loader size exceeds 2KB. file size: ', fsize
+                    print('loader size exceeds 2KB. file size: ', fsize)
                     sys.exit(4)
                 else:
                     left_bytes = 2048 - fsize
@@ -85,7 +85,7 @@ class generator(object):
                 left_bytes = fsize % self.block_size
                 if left_bytes:
                     left_bytes = self.block_size - left_bytes
-            print 'lba: ', lba, 'blocks: ', blocks, 'bootp: ', bootp, 'fname: ', fname
+            print('lba: ', lba, 'blocks: ', blocks, 'bootp: ', bootp, 'fname: ', fname)
             # write images
             fimg = open(fname, "rb")
             for i in range (0, blocks):
@@ -99,15 +99,15 @@ class generator(object):
 
             if (self.idx == 0):
                 self.p_file = 2048
-            print 'p_file: ', self.p_file, 'last block is ', fsize % self.block_size, 'bytes', '  tell: ', self.fp.tell(), 'left_bytes: ', left_bytes
+            print('p_file: ', self.p_file, 'last block is ', fsize % self.block_size, 'bytes', '  tell: ', self.fp.tell(), 'left_bytes: ', left_bytes)
             if left_bytes:
                 for i in range (0, left_bytes):
                     zero = struct.pack('x')
                     self.fp.write(zero)
-                print 'p_file: ', self.p_file, '  pad to: ', self.fp.tell()
+                print('p_file: ', self.p_file, '  pad to: ', self.fp.tell())
 
             # write entry information at the header
-            byte = struct.pack('8s8siii', 'ENTRYHDR', self.s1_entry_name[self.idx], lba, blocks, bootp)
+            byte = struct.pack('8s8siii', b'ENTRYHDR', self.s1_entry_name[self.idx].encode(), lba, blocks, bootp)
             self.fp.seek(self.p_entry)
             self.fp.write(byte)
             self.p_entry += 28
@@ -121,29 +121,29 @@ class generator(object):
     def end(self):
         self.fp.seek(20)
         start,end = struct.unpack("ii", self.fp.read(8))
-        print "start: ", self.hex2(start), 'end: ', self.hex2(end)
+        print("start: ", self.hex2(start), 'end: ', self.hex2(end))
         end = start + self.p_file
-        print "start: ", self.hex2(start), 'end: ', self.hex2(end)
+        print("start: ", self.hex2(start), 'end: ', self.hex2(end))
         self.fp.seek(24)
         byte = struct.pack('i', end)
         self.fp.write(byte)
         self.fp.close()
 
     def create(self, img_loader, img_bl1, img_ns_bl1u, output_img):
-        print '+-----------------------------------------------------------+'
-        print ' Input Images:'
-        print '     loader:                       ', img_loader
-        print '     bl1:                          ', img_bl1
-        print '     ns_bl1u:                      ', img_ns_bl1u
-        print ' Ouput Image:                      ', output_img
-        print '+-----------------------------------------------------------+\n'
+        print('+-----------------------------------------------------------+')
+        print(' Input Images:')
+        print('     loader:                       ', img_loader)
+        print('     bl1:                          ', img_bl1)
+        print('     ns_bl1u:                      ', img_ns_bl1u)
+        print(' Ouput Image:                      ', output_img)
+        print('+-----------------------------------------------------------+\n')
 
         self.stage = 1
 
         # The first 2KB is reserved
         # The next 2KB is for loader image
         self.add(4, img_loader)
-        print 'self.idx: ', self.idx
+        print('self.idx: ', self.idx)
         # bl1.bin starts from 4KB
         self.add(8, img_bl1)
         if img_ns_bl1u != 0:
@@ -155,11 +155,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv,"ho:",["img_loader=","img_bl1=","img_ns_bl1u="])
     except getopt.GetoptError:
-        print 'gen_loader.py -o <l-loader.bin> --img_loader <l-loader> --img_bl1 <bl1.bin> --img_ns_bl1u <ns_bl1u.bin>'
+        print('gen_loader.py -o <l-loader.bin> --img_loader <l-loader> --img_bl1 <bl1.bin> --img_ns_bl1u <ns_bl1u.bin>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'gen_loader.py -o <l-loader.bin> --img_loader <l-loader> --img_bl1 <bl1.bin> --img_ns_bl1u <ns_bl1u.bin>'
+            print('gen_loader.py -o <l-loader.bin> --img_loader <l-loader> --img_bl1 <bl1.bin> --img_ns_bl1u <ns_bl1u.bin>')
             sys.exit(1)
         elif opt == '-o':
             output_img = arg

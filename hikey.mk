@@ -29,7 +29,7 @@ temp: loader
 	$(OBJCOPY) -O binary $< $@
 
 l-loader.bin: temp $(BL2)
-	python gen_loader_hikey.py -o $@ --img_loader=temp --img_bl1=$(BL2)
+	python3 gen_loader_hikey.py -o $@ --img_loader=temp --img_bl1=$(BL2)
 
 .PHONY: check_sgdisk
 check_sgdisk:
@@ -42,7 +42,7 @@ prm_ptable.img: check_sgdisk
 	done
 
 recovery.bin: temp $(BL1) $(NS_BL1U)
-	python gen_loader_hikey.py -o $@ --img_loader=temp --img_bl1=$(BL1) --img_ns_bl1u=$(NS_BL1U)
+	python3 gen_loader_hikey.py -o $@ --img_loader=temp --img_bl1=$(BL1) --img_ns_bl1u=$(NS_BL1U)
 
 .PHONY: clean
 clean:
