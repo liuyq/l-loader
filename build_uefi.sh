@@ -232,7 +232,9 @@ function do_build()
 		esac
 	fi
 	source edk2/edksetup.sh
-	make -C edk2/BaseTools
+	# refered to the commit here:
+	# https://review.trustedfirmware.org/plugins/gitiles/OP-TEE/build/+/46f7be20a128d30bb9af439ccaa69cfd872fd3c0%5E%21/#F0
+	make -C edk2/BaseTools BUILD_CC="gcc -Wno-error=stringop-truncation"
 	if [ $? != 0 ]; then
 		echo "Fail to build EDKII BaseTools ($?)"
 		exit
