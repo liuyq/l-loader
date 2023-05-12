@@ -65,9 +65,9 @@ case ${PTABLE} in
     ${SGDISK} -n 7:0:+256M -t 7:0700 -u 7:BED8EBDC-298E-4A7A-B1F1-2500D98453B7 -c 7:"vendor" ${TEMP_FILE}
     #[8: cache: 334M-590M]
     ${SGDISK} -n 8:0:+256M -t 8:8301 -u 8:A092C620-D178-4CA7-B540-C4E26BD6D2E2 -c 8:"cache" ${TEMP_FILE}
-    #[9: system: 590M-2126M]
-    ${SGDISK} -n 9:0:+1536M -t 9:8300 -u 9:FC56E345-2E8E-49AE-B2F8-5B9D263FE377 -c 9:"system" ${TEMP_FILE}
-    #[10: userdata: 2126M-End]
+    #[9: system: 590M-3150M]
+    ${SGDISK} -n 9:0:+2560M -t 9:8300 -u 9:FC56E345-2E8E-49AE-B2F8-5B9D263FE377 -c 9:"system" ${TEMP_FILE}
+    #[10: userdata: 3150M-End]
     ${SGDISK} -n -E -t 10:8300 -u 10:064111F6-463B-4CE1-876B-13F3684CE164 -c 10:"userdata" -p ${TEMP_FILE}
     ;;
   linux-4g|linux-8g)
